@@ -81,6 +81,7 @@ def mktd(date=date.today()):
 
 
 td = mktd()
+td = mktd(datetime(2005, 1, 1))
 
 # main
 def Main() -> int:
@@ -198,12 +199,22 @@ def PrintWeekDays():
 def MakeMonth() -> tuple[list[int], int, tuple[int, int]]:
 	DtW = []
 	borders = (0, 0)
-	if td.dotw != 0:
+	if datetime(td.year, td.monthi, 1).weekday() != 0:
 		i = MONTHS[td.monthi - 1].days
-		while not len(DtW) + 7 - td.dotw == 7:
+		#TODO
+		while True:
 			borders = borders[0] + 1, borders[1]
 			DtW.append(i)
 			i -= 1
+			#print(f"{((len(DtW)+datetime(td.year, td.monthi, 1).weekday())%7)} == {datetime(td.year, td.monthi, 1).weekday()} -> \
+#{((len(DtW)+datetime(td.year, td.monthi, 1).weekday())%7) == datetime(td.year, td.monthi, 1).weekday()}")
+			#if GetCh() == 'q':break
+			if ((len(DtW)+datetime(td.year, td.monthi, 1).weekday())%7)+1 == datetime(td.year, td.monthi, 1).weekday():
+				break
+		#while datetime(td.year, td.monthi, max(len(DtW)-1, 1)).weekday() != 0:
+		#	borders = borders[0] + 1, borders[1]
+		#	DtW.append(i)
+		#	i -= 1
 		DtW = DtW[::-1]
 		DtW += [x + 1 for x in r(td.month.days)]
 

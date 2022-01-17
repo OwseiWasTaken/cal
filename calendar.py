@@ -6,25 +6,18 @@ from datetime import date, datetime
 # TODO config file (lang, -d dates and stuff)
 
 # TODO remove 2° arg and put it in sWEEKDAYS
+#  i removed it and nothing wrong happend! how?!?!?!?
 WEEKDAYS = [ # in pt-br
-	("Segunda", "Seg"),
-	("Terça", "Ter"),
-	("Quarta", "Qua"),
-	("Quinta", "Qui"),
-	("Sexta", "Sex"),
-	("Sábado", "Sáb"),
-	("Domingo", "Dom"),
+	"Segunda",
+	"Terça",
+	"Quarta",
+	"Quinta",
+	"Sexta",
+	"Sábado",
+	"Domingo",
 ]
 
-sWEEKDAYS = [ # in pt-br
-	"Seg",
-	"Ter",
-	"Qua",
-	"Qui",
-	"Sex",
-	"Sáb",
-	"Dom",
-]
+sWEEKDAYS = list(map(lambda x:x[:4], WEEKDAYS))
 
 
 class _month:
@@ -38,18 +31,18 @@ class _month:
 
 
 MONTHS = [ # in pt-br
-	_month("Dez", 31),	#	, WEEKDAYS[datetime(year, 12, 1).weekday()]),
-	_month("Jan", 31),	#	, WEEKDAYS[datetime(year, 1 , 1).weekday()]),
-	_month("Fev", 28),	#  , WEEKDAYS[datetime(year, 2 , 1).weekday()]),
-	_month("Mar", 31),	#	, WEEKDAYS[datetime(year, 3 , 1).weekday()]),
-	_month("Abr", 30),	#	, WEEKDAYS[datetime(year, 4 , 1).weekday()]),
-	_month("Mai", 31),	#	, WEEKDAYS[datetime(year, 5 , 1).weekday()]),
-	_month("Jun", 30),	#	, WEEKDAYS[datetime(year, 6 , 1).weekday()]),
-	_month("Jul", 31),	#	, WEEKDAYS[datetime(year, 7 , 1).weekday()]),
-	_month("Ago", 31),	#	, WEEKDAYS[datetime(year, 8 , 1).weekday()]),
-	_month("Set", 30),	#	, WEEKDAYS[datetime(year, 9 , 1).weekday()]),
-	_month("Out", 31),	#	, WEEKDAYS[datetime(year, 10, 1).weekday()]),
-	_month("Nov", 30),	#	, WEEKDAYS[datetime(year, 11, 1).weekday()]),
+	_month("Dez", 31),
+	_month("Jan", 31),
+	_month("Fev", 28),
+	_month("Mar", 31),
+	_month("Abr", 30),
+	_month("Mai", 31),
+	_month("Jun", 30),
+	_month("Jul", 31),
+	_month("Ago", 31),
+	_month("Set", 30),
+	_month("Out", 31),
+	_month("Nov", 30),
 ]
 
 
@@ -206,10 +199,6 @@ def MakeMonth() -> tuple[list[int], int, tuple[int, int]]:
 			borders = borders[0] + 1, borders[1]
 			DtW.append(i)
 			i -= 1
-		#while datetime(td.year, td.monthi, max(len(DtW)-1, 1)).weekday() != 0:
-		#	borders = borders[0] + 1, borders[1]
-		#	DtW.append(i)
-		#	i -= 1
 		DtW = DtW[::-1]
 		DtW += [x + 1 for x in r(td.month.days)]
 

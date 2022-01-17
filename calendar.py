@@ -34,16 +34,16 @@ def ReadXmp():
 	sw = xmp["lang"][uselang]["weekdays"]
 	MONTHS = [	# in pt-br
 		_month(sm[11], 31),  # TODO # remove this month, monthi-1, mend bronken
-		_month(sm[0], 31),
-		_month(sm[1], 28),
-		_month(sm[2], 31),
-		_month(sm[3], 30),
-		_month(sm[4], 31),
-		_month(sm[5], 30),
-		_month(sm[6], 31),
-		_month(sm[7], 31),
-		_month(sm[8], 30),
-		_month(sm[9], 31),
+		_month(sm[ 0], 31),
+		_month(sm[ 1], 28),
+		_month(sm[ 2], 31),
+		_month(sm[ 3], 30),
+		_month(sm[ 4], 31),
+		_month(sm[ 5], 30),
+		_month(sm[ 6], 31),
+		_month(sm[ 7], 31),
+		_month(sm[ 8], 30),
+		_month(sm[ 9], 31),
 		_month(sm[10], 30),
 		_month(sm[11], 31),
 	]

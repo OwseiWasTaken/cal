@@ -85,7 +85,7 @@ td = mktd()
 # main
 def Main() -> int:
 	if not exists('Cal-config.xmp'):
-		UseFile('Cal-config.xmp', {})
+		UseXmp('Cal-config.xmp', {})
 	global td
 	assert td
 	prtmonth = MakeMonth()

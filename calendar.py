@@ -5,18 +5,10 @@ from datetime import date, datetime
 
 # TODO config file (lang, -d dates and stuff)
 
-WEEKDAYS = [ # in pt-br
-	"Segunda",
-	"Terça",
-	"Quarta",
-	"Quinta",
-	"Sexta",
-	"Sábado",
-	"Domingo",
-]
 
-sWEEKDAYS = list(map(lambda x:x[:3], WEEKDAYS))
-
+WEEKDAYS = []
+sWEEKDAYS = []
+MONTHS = []
 @dataclass
 class _month:
 	name:str
@@ -25,22 +17,42 @@ class _month:
 	def __repr__(this):
 		return f"{this.name} w/ {this.days} days"
 
-MONTHS = [ # in pt-br
-	_month("Dez", 31), # TODO # remove this month, monthi-1, mend bronken
-	_month("Jan", 31),
-	_month("Fev", 28),
-	_month("Mar", 31),
-	_month("Abr", 30),
-	_month("Mai", 31),
-	_month("Jun", 30),
-	_month("Jul", 31),
-	_month("Ago", 31),
-	_month("Set", 30),
-	_month("Out", 31),
-	_month("Nov", 30),
-	_month("Dez", 31),
-]
 
+def ReadXmp():
+	global MONTHS, WEEKDAYS, sWEEKDAYS
+	if not exists("Cal-config.xmp"):
+		UseXmp("Cal-config.xmp", InitConfig())
+	xmp = UseXmp("Cal-config.xmp")
+	if not 'use-lang' in xmp.keys():
+		return
+	uselang = xmp['use-lang']
+	sm = xmp['lang'][uselang]['months']
+	sw = xmp['lang'][uselang]['weekdays']
+	MONTHS = [ # in pt-br
+		_month(sm[11], 31), # TODO # remove this month, monthi-1, mend bronken
+		_month(sm[0], 31),
+		_month(sm[1], 28),
+		_month(sm[2], 31),
+		_month(sm[3], 30),
+		_month(sm[4], 31),
+		_month(sm[5], 30),
+		_month(sm[6], 31),
+		_month(sm[7], 31),
+		_month(sm[8], 30),
+		_month(sm[9], 31),
+		_month(sm[10], 30),
+		_month(sm[11], 31),
+	]
+	WEEKDAYS = [ # in pt-br
+		sw[0],
+		sw[1],
+		sw[2],
+		sw[3],
+		sw[4],
+		sw[5],
+		sw[6],
+	]
+	sWEEKDAYS = list(map(lambda x:x[:3], WEEKDAYS))
 
 @dataclass
 class Td:
@@ -68,14 +80,15 @@ def mktd(date=date.today()):
 		WEEKDAYS[dotw],
 		year,
 	)
-
-td = mktd()
+td = None
 
 # main
 def Main() -> int:
 	if not exists('Cal-config.xmp'):
 		UseXmp('Cal-config.xmp', InitConfig())
+	ReadXmp() # set global WEEKDAYS and MONTHS
 	global td
+	td = mktd()
 	assert td
 	prtmonth = MakeMonth()
 	if get("-i").exists:  # interactive

@@ -3,6 +3,7 @@
 from util import *
 from datetime import date, datetime
 
+# TODO wait wtf, the months are out of order!
 # TODO config file (lang, -d dates and stuff)
 
 

@@ -5,6 +5,7 @@ from datetime import date, datetime
 
 # TODO config file (lang, -d dates and stuff)
 
+# TODO remove 2° arg and put it in sWEEKDAYS
 WEEKDAYS = [ # in pt-br
 	("Segunda", "Seg"),
 	("Terça", "Ter"),
@@ -81,7 +82,6 @@ def mktd(date=date.today()):
 
 
 td = mktd()
-td = mktd(datetime(2005, 1, 1))
 
 # main
 def Main() -> int:
@@ -202,15 +202,10 @@ def MakeMonth() -> tuple[list[int], int, tuple[int, int]]:
 	if datetime(td.year, td.monthi, 1).weekday() != 0:
 		i = MONTHS[td.monthi - 1].days
 		#TODO
-		while True:
+		for _ in r(len(DtW)+datetime(td.year, td.monthi, 1).weekday()):
 			borders = borders[0] + 1, borders[1]
 			DtW.append(i)
 			i -= 1
-			#print(f"{((len(DtW)+datetime(td.year, td.monthi, 1).weekday())%7)} == {datetime(td.year, td.monthi, 1).weekday()} -> \
-#{((len(DtW)+datetime(td.year, td.monthi, 1).weekday())%7) == datetime(td.year, td.monthi, 1).weekday()}")
-			#if GetCh() == 'q':break
-			if ((len(DtW)+datetime(td.year, td.monthi, 1).weekday())%7)+1 == datetime(td.year, td.monthi, 1).weekday():
-				break
 		#while datetime(td.year, td.monthi, max(len(DtW)-1, 1)).weekday() != 0:
 		#	borders = borders[0] + 1, borders[1]
 		#	DtW.append(i)

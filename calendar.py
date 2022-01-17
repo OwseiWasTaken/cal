@@ -9,6 +9,7 @@ from datetime import date, datetime
 WEEKDAYS = []
 sWEEKDAYS = []
 MONTHS = []
+confile = '/'.join(__file__.split('/')[:-1])+'/Cal-config.xmp'
 
 
 @dataclass
@@ -22,12 +23,12 @@ class _month:
 
 def ReadXmp():
 	global MONTHS, WEEKDAYS, sWEEKDAYS
-	if not exists("Cal-config.xmp"):
-		UseXmp("Cal-config.xmp", InitConfig())
-	xmp = UseXmp("Cal-config.xmp")
+	if not exists(confile):
+		UseXmp(confile, InitConfig())
+	xmp = UseXmp(confile)
 	if not "use-lang" in xmp.keys():
 		xmp["use-lang"] = "en-us"
-		UseXmp("Cal-config.xmp", xmp)
+		UseXmp(confile, xmp)
 	uselang = xmp["use-lang"]
 	sm = xmp["lang"][uselang]["months"]
 	sw = xmp["lang"][uselang]["weekdays"]
@@ -90,8 +91,8 @@ td = None
 
 # main
 def Main() -> int:
-	if not exists("Cal-config.xmp"):
-		UseXmp("Cal-config.xmp", InitConfig())
+	if not exists(confile):
+		UseXmp(confile, InitConfig())
 	ReadXmp()  # set global WEEKDAYS and MONTHS
 	global td
 	td = mktd()

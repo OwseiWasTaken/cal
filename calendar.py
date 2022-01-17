@@ -5,8 +5,6 @@ from datetime import date, datetime
 
 # TODO config file (lang, -d dates and stuff)
 
-# TODO remove 2° arg and put it in sWEEKDAYS
-#  i removed it and nothing wrong happend! how?!?!?!?
 WEEKDAYS = [ # in pt-br
 	"Segunda",
 	"Terça",
@@ -19,12 +17,10 @@ WEEKDAYS = [ # in pt-br
 
 sWEEKDAYS = list(map(lambda x:x[:3], WEEKDAYS))
 
-
+@dataclass
 class _month:
-	def __init__(this, name, days):  # , SDotW): # Starting Day of the Week
-		this.name = name
-		this.days = days
-		# this.SDotW = SDotW
+	name:str
+	days:int
 
 	def __repr__(this):
 		return f"{this.name} w/ {this.days} days"
@@ -92,7 +88,7 @@ def Main() -> int:
 	# mktd(...), MakeMonth()
 	# OR
 	# then add to reader ['d', 'yyyy,mm,dd', 'q']
-	print(f"{td.dotws[0]}, {td.day} de {td.month.name} de {td.year}")
+	print(f"{td.dotws}, {td.day} de {td.month.name} de {td.year}")
 	PrintWeekDays()
 	PrintMonth(prtmonth[0], prtmonth[1])
 	# PrintMonth(*MakeMonth())
@@ -145,7 +141,7 @@ def Interective(prtmonth):
 	while True:
 		ss("clear")
 		stdout.write(s)
-		print(f"{td.dotws[0]}, {td.day} de {td.month.name} de {td.year}")
+		print(f"{td.dotws}, {td.day} de {td.month.name} de {td.year}")
 		PrintWeekDays()
 		PrintMonth(mnt[0], mnt[1])
 		stdout.write(e)
@@ -154,7 +150,7 @@ def Interective(prtmonth):
 		if ipt == "q":
 			ss("clear")
 			stdout.write(s)
-			print(f"{td.dotws[0]}, {td.day} de {td.month.name} de {td.year}")
+			print(f"{td.dotws}, {td.day} de {td.month.name} de {td.year}")
 			PrintWeekDays()
 			PrintMonth(mnt[0], mnt[1])
 			return

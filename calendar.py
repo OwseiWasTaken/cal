@@ -3,7 +3,9 @@
 from util import *
 from datetime import date, datetime
 
-WEEKDAYS = [
+# TODO config file (lang, -d dates and stuff)
+
+WEEKDAYS = [ # in pt-br
 	("Segunda", "Seg"),
 	("Terça", "Ter"),
 	("Quarta", "Qua"),
@@ -13,7 +15,7 @@ WEEKDAYS = [
 	("Domingo", "Dom"),
 ]
 
-sWEEKDAYS = [
+sWEEKDAYS = [ # in pt-br
 	"Seg",
 	"Ter",
 	"Qua",
@@ -34,7 +36,7 @@ class _month:
 		return f"{this.name} w/ {this.days} days"
 
 
-MONTHS = [
+MONTHS = [ # in pt-br
 	_month("Dez", 31),	#	, WEEKDAYS[datetime(year, 12, 1).weekday()]),
 	_month("Jan", 31),	#	, WEEKDAYS[datetime(year, 1 , 1).weekday()]),
 	_month("Fev", 28),	#  , WEEKDAYS[datetime(year, 2 , 1).weekday()]),
@@ -78,16 +80,22 @@ def mktd(date=date.today()):
 	)
 
 
-rn = date.today()
 td = mktd()
 
 # main
 def Main() -> int:
+	global td
 	assert td
 	prtmonth = MakeMonth()
 	if get("-i").exists:  # interactive
 		Interective(prtmonth)
 		return 0
+	# TODO
+	# -d date = search config file for
+	# date's name
+	# mktd(...), MakeMonth()
+	# OR
+	# then add to reader ['d', 'yyyy,mm,dd', 'q']
 	print(f"{td.dotws[0]}, {td.day} de {td.month.name} de {td.year}")
 	PrintWeekDays()
 	PrintMonth(prtmonth[0], prtmonth[1])

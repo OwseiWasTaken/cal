@@ -17,7 +17,7 @@ WEEKDAYS = [ # in pt-br
 	"Domingo",
 ]
 
-sWEEKDAYS = list(map(lambda x:x[:4], WEEKDAYS))
+sWEEKDAYS = list(map(lambda x:x[:3], WEEKDAYS))
 
 
 class _month:

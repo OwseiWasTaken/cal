@@ -3,7 +3,6 @@
 from util import *
 from datetime import date, datetime
 
-# TODO wait wtf, the months are out of order!
 # TODO config file (lang, -d dates and stuff)
 
 
@@ -25,7 +24,8 @@ def ReadXmp():
 		UseXmp("Cal-config.xmp", InitConfig())
 	xmp = UseXmp("Cal-config.xmp")
 	if not 'use-lang' in xmp.keys():
-		return
+		xmp['use-lang'] = 'en-us'
+		UseXmp("Cal-config.xmp", xmp)
 	uselang = xmp['use-lang']
 	sm = xmp['lang'][uselang]['months']
 	sw = xmp['lang'][uselang]['weekdays']
@@ -260,52 +260,60 @@ def InitConfig() -> dict[Any]: # fu, not type hinting this shit
 		'lang':{
 			'pt-br':{
 				'weekdays':{
-					"Segunda",
-					"Terça",
-					"Quarta",
-					"Quinta",
-					"Sexta",
-					"Sábado",
-					"Domingo",
+					(
+						"Segunda",
+						"Terça",
+						"Quarta",
+						"Quinta",
+						"Sexta",
+						"Sábado",
+						"Domingo",
+					)
 				},
 				'months':{
-					"Jan",
-					"Fev",
-					"Mar",
-					"Abr",
-					"Mai",
-					"Jun",
-					"Jul",
-					"Ago",
-					"Set",
-					"Out",
-					"Nov",
-					"Dez",
+					(
+						"Jan",
+						"Fev",
+						"Mar",
+						"Abr",
+						"Mai",
+						"Jun",
+						"Jul",
+						"Ago",
+						"Set",
+						"Out",
+						"Nov",
+						"Dez",
+					)
 				}
 			},
 			'en-us':{
 				'weekdays':{
-					"Monday",
-					"Tuesday",
-					"Wednesday",
-					"Thursday",
-					"Friday",
-					"Saturday",
-					"Sunday",
+					(
+						"Monday",
+						"Tuesday",
+						"Wednesday",
+						"Thursday",
+						"Friday",
+						"Saturday",
+						"Sunday",
+					)
 				},
 				'months':{
-					"Jan",
-					"Feb",
-					"Mar",
-					"Apr",
-					"May",
-					"Jun",
-					"Jul",
-					"Agu",
-					"Sep",
-					"Oct",
-					"Nov",
-					"Dec",
+					(
+						"Jan",
+						"Feb",
+						"Mar",
+						"Apr",
+						"May",
+						"Jun",
+						"Jul",
+						"Agu",
+						"Sep",
+						"Oct",
+						"Nov",
+						"Dec",
+					)
 				}
 			}
 		},

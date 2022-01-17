@@ -25,9 +25,8 @@ class _month:
 	def __repr__(this):
 		return f"{this.name} w/ {this.days} days"
 
-
 MONTHS = [ # in pt-br
-	_month("Dez", 31),
+	_month("Dez", 31), # TODO # remove this month, monthi-1, mend bronken
 	_month("Jan", 31),
 	_month("Fev", 28),
 	_month("Mar", 31),
@@ -39,6 +38,7 @@ MONTHS = [ # in pt-br
 	_month("Set", 30),
 	_month("Out", 31),
 	_month("Nov", 30),
+	_month("Dez", 31),
 ]
 
 
@@ -69,13 +69,12 @@ def mktd(date=date.today()):
 		year,
 	)
 
-
 td = mktd()
 
 # main
 def Main() -> int:
 	if not exists('Cal-config.xmp'):
-		UseXmp('Cal-config.xmp', {})
+		UseXmp('Cal-config.xmp', InitConfig())
 	global td
 	assert td
 	prtmonth = MakeMonth()
@@ -241,6 +240,65 @@ def PrintMonth(dtw: list[str], select):
 			print(dtw[i], end=" " * (4 - len(str(dtw[i]))))
 	sout.write("\x1b[0m\n")
 
+def InitConfig() -> dict[Any]: # fu, not type hinting this shit
+	return {
+		'use-lang':'en-us',
+		'lang':{
+			'pt-br':{
+				'weekdays':{
+					"Segunda",
+					"Terça",
+					"Quarta",
+					"Quinta",
+					"Sexta",
+					"Sábado",
+					"Domingo",
+				},
+				'months':{
+					"Jan",
+					"Fev",
+					"Mar",
+					"Abr",
+					"Mai",
+					"Jun",
+					"Jul",
+					"Ago",
+					"Set",
+					"Out",
+					"Nov",
+					"Dez",
+				}
+			},
+			'en-us':{
+				'weekdays':{
+					"Monday",
+					"Tuesday",
+					"Wednesday",
+					"Thursday",
+					"Friday",
+					"Saturday",
+					"Sunday",
+				},
+				'months':{
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
+					"May",
+					"Jun",
+					"Jul",
+					"Agu",
+					"Sep",
+					"Oct",
+					"Nov",
+					"Dec",
+				}
+			}
+		},
+		'dates':{
+			# none by default
+		}
+	}
 
 # start
 if __name__ == "__main__":

@@ -57,6 +57,7 @@ def ReadXmp():
 		sw[6],
 	]
 	sWEEKDAYS = list(map(lambda x: x[:3], WEEKDAYS))
+	return xmp
 
 
 @dataclass
@@ -99,23 +100,23 @@ def help(show:list[str]):
 	printf("usage: {s} [-d Date ] [-i interactive [-s strict] [-r read]] [-h [i/d/h]]\n", argv[0])
 	expl = {'d':"""
 -d goto date by name: instead of starting the calendar with the current date,
-  start at the date in Cal-config.xmp
-  e.g
-  Cal-config.xmp:
-  <dates>
-    <birtday>
-      [date 'YYYY,MM,DD']
-      [desc 'my birtday!!!']
-    </birtday>
+start at the date in Cal-config.xmp
+e.g
+Cal-config.xmp:
+<dates>
+	<birtday>
+		[date 'YYYY,MM,DD']
+		[desc 'my birtday!!!']
+	</birtday>
 
-    <DATE_NAME>
-      [desc 'some date']
-      [date 'YYYY,MM,DD']
-    </DATE_NAME>
-  </dates>
-  $%s -d birtday
-  instead of starting the calendar at %s,
-  it will start at YYYY,MM,DD defined by the config file
+	<DATE_NAME>
+		[desc 'some date']
+		[date 'YYYY,MM,DD']
+	</DATE_NAME>
+</dates>
+$%s -d birtday
+instead of starting the calendar at %s,
+it will start at YYYY,MM,DD defined by the config file
 """ % (argv[0], date.today()),
 	'i':"""
 -i interactive mode:
@@ -152,7 +153,7 @@ will display this
 			print(expl[i])
 		else:
 			fprintf(stderr, "can't print specific help of `{s}`, it does not exist\n-h [i/d/h]\n", i)
-			return 3
+			return 5
 	return 0
 
 
@@ -162,20 +163,46 @@ def Main() -> int:
 		return help(get('-h').list)
 	if not exists(confile):
 		UseXmp(confile, InitConfig())
-	ReadXmp()  # set global WEEKDAYS and MONTHS
+	conf = ReadXmp()  # set global WEEKDAYS and MONTHS
 	global td
 	td = mktd()
 	assert td
 	prtmonth = MakeMonth()
-	if get("-i").exists:  # interactive
-		Interective(prtmonth)
-		return 0
 
 	# TODO
 	# -d date = search config file for
 	# date's name
 	# mktd(...), MakeMonth()
+	if get('-d').exists:
+		if len(get('-d').list) == 1:
+			d = get('-d').first
+			if 'dates' in conf.keys():
+				dates = conf['dates']
+				if d in dates.keys():
+					dv = dates[d]
+					if 'date' in dv.keys():
+						newdate = (IsDate(dv['date']))
+						if newdate[0]:
+							td = mktd(datetime(*newdate[1]))
+							prtmonth = MakeMonth()
+						else:
+							fprintf(stderr, "can't transform {s} to date(YYYY,MM,DD)\n", d)
+							return 5
+					else:
+						fprintf(stderr, "can't find [date] variable on <{s}>\n", d)
+						return 4
+				else:
+					fprintf(stderr, "can't find {s} on <dates>\n<dates>:{s}", d, str(dates))
+					return 3
+			else:
+				fprintf(stderr, "can't find <dates> on config file\n")
+				return 2
+		else:
+			fprintf(stderr, "-d option uses 1 and only 1 argument!, not {d}\n", len(get('-d').list))
+			return 1
 
+	if get("-i").exists:  # interactive
+		return Interective(prtmonth)
 	print(f"{td.dotws}, {td.day} de {td.month.name} de {td.year}")
 	PrintWeekDays()
 	PrintMonth(prtmonth[0], prtmonth[1])
@@ -241,7 +268,7 @@ def Interective(prtmonth):
 			print(f"{td.dotws}, {td.day} de {td.month.name} de {td.year}")
 			PrintWeekDays()
 			PrintMonth(mnt[0], mnt[1])
-			return
+			return 0
 		elif ipt == "r":
 			import calendar
 
@@ -256,7 +283,7 @@ def Interective(prtmonth):
 		elif ipt == "cq":
 			ss("clear")
 			stdout.write(s)
-			return
+			return 0
 		elif ipt == "d":
 			ClearLine(y - 2)
 			stdout.write(e)

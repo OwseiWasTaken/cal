@@ -33,7 +33,7 @@ def ReadXmp():
 	sm = xmp["lang"][uselang]["months"]
 	sw = xmp["lang"][uselang]["weekdays"]
 	MONTHS = [	# in pt-br
-		_month(sm[11], 31),  # TODO # remove this month, monthi-1, mend bronken
+		#_month(sm[11], 31),
 		_month(sm[ 0], 31),
 		_month(sm[ 1], 28),
 		_month(sm[ 2], 31),
@@ -65,6 +65,7 @@ class Td:
 	day: int
 	month: _month
 	monthi: int
+	pmonth: int
 	dotw: int
 	dotws: str
 	year: int
@@ -74,13 +75,18 @@ def mktd(date=date.today()):
 	today = date
 	year = today.year
 	monthi = today.month
-	month = MONTHS[monthi]
+	month = MONTHS[monthi-1]
 	dotw = today.weekday()
+	if monthi == 0:
+		pmonth = 12
+	else:
+		pmonth = monthi-1
 	return Td(
 		today,
 		today.day,
 		month,
 		monthi,
+		pmonth,
 		dotw,
 		WEEKDAYS[dotw],
 		year,
@@ -165,7 +171,7 @@ def Interective(prtmonth):
 		PrintMonth(mnt[0], mnt[1])
 		stdout.write(e)
 		# ipt = input('e/d/q:').lower()
-		ipt = read("d/l/e/q:").lower()
+		ipt = read("$").lower()
 		if ipt == "q":
 			ss("clear")
 			stdout.write(s)
@@ -178,12 +184,11 @@ def Interective(prtmonth):
 
 			return calendar.Main()
 		elif ipt == 'l':
-			# tooooooo
 			stdout.write(ee)
 			stdout.write("\x1b[2;37m")
 			stdout.write("q:quit, r:reload, l:list, e:edit date, cq:clear quit, d:goto date")
 			stdout.write("\x1b[0m")
-		elif ipt == "e":  # edit day
+		elif ipt == "e":  # edit date
 			assert 0, "udev"
 		elif ipt == "cq":
 			ss("clear")
@@ -192,11 +197,9 @@ def Interective(prtmonth):
 		elif ipt == "d":
 			ClearLine(y - 2)
 			stdout.write(e)
-			# idt, dt = IsDate(input("date:"))
 			idt, dt = IsDate(read("date:"))
 			if not strictdate:
 				idt = idt | (dt != (-1, -1, -1))
-			# idt = idt|( (not strictdate) and dt != (-1, -1, -1) )
 			if idt:
 				td = mktd(datetime(dt[0], dt[1], dt[2]))
 				mnt = MakeMonth()
@@ -214,7 +217,7 @@ def MakeMonth() -> tuple[list[int], int, tuple[int, int]]:
 	DtW = []
 	borders = (0, 0)
 	if datetime(td.year, td.monthi, 1).weekday() != 0:
-		i = MONTHS[td.monthi - 1].days
+		i = MONTHS[td.pmonth].days
 		# TODO
 		for _ in r(len(DtW) + datetime(td.year, td.monthi, 1).weekday()):
 			borders = borders[0] + 1, borders[1]

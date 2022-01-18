@@ -95,8 +95,71 @@ def mktd(date=date.today()):
 
 td = None
 
+def help(show:list[str]):
+	printf("usage: {s} [-d Date ] [-i interactive [-s strict] [-r read]] [-h [i/d/h]]\n", argv[0])
+	expl = {'d':"""
+-d goto date by name: instead of starting the calendar with the current date,
+  start at the date in Cal-config.xmp
+  e.g
+  Cal-config.xmp:
+  <dates>
+    <birtday>
+      [date 'YYYY,MM,DD']
+      [desc 'my birtday!!!']
+    </birtday>
+
+    <DATE_NAME>
+      [desc 'some date']
+      [date 'YYYY,MM,DD']
+    </DATE_NAME>
+  </dates>
+  $%s -d birtday
+  instead of starting the calendar at %s,
+  it will start at YYYY,MM,DD defined by the config file
+""" % (argv[0], date.today()),
+	'i':"""
+-i interactive mode:
+instead of just printing the calendar, you can
+q:quit, r:reload calendar, l:list, e:edit date, cq:clear quit, d:goto date
+e.g
+$./calendar.py -i
+<calendar printed>
+$$d
+date:2000,3,3 (this will change the calendar's date to 2000-3-3)
+$$r
+(this will reload the program)
+$$l
+"q:quit, r:reload calendar, l:list, e:edit date, cq:clear quit, d:goto date"
+$$cq
+clear and quit
+
+[-s strict mode]
+more strict on entering the date
+(003,1,2) would not work, because of the leading zeros]
+[-r reader]
+instead of using input, the program will get arguments passed to -r as input
+e.g
+$$./calendar.py -i -r d 2000,3,3
+this ill work the same as calendar.py, then typing d, then 2000,3,3
+""",
+	'h':"""
+-h [i/d/h]
+will display this
+"""
+	}
+	for i in show:
+		if i in expl.keys():
+			print(expl[i])
+		else:
+			fprintf(stderr, "can't print specific help of `{s}`, it does not exist\n-h [i/d/h]\n", i)
+			return 3
+	return 0
+
+
 # main
 def Main() -> int:
+	if get('-h').exists:
+		return help(get('-h').list)
 	if not exists(confile):
 		UseXmp(confile, InitConfig())
 	ReadXmp()  # set global WEEKDAYS and MONTHS
@@ -107,12 +170,12 @@ def Main() -> int:
 	if get("-i").exists:  # interactive
 		Interective(prtmonth)
 		return 0
+
 	# TODO
 	# -d date = search config file for
 	# date's name
 	# mktd(...), MakeMonth()
-	# OR
-	# then add to reader ['d', 'yyyy,mm,dd', 'q']
+
 	print(f"{td.dotws}, {td.day} de {td.month.name} de {td.year}")
 	PrintWeekDays()
 	PrintMonth(prtmonth[0], prtmonth[1])
@@ -135,7 +198,7 @@ def IsDate(date: str) -> tuple[bool, tuple[str, str, str]]:
 		year = -1  # possible, bruh
 		month = -1
 		day = -1
-	return (s != None and 13 > month > 0 and 32 > day > 0), (year, month, day)
+	return (s != None and 13 > month > 0 and 32 > day > 0 and year > 0), (year, month, day)
 
 
 reader: list[str] = []

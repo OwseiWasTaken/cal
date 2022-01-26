@@ -159,8 +159,8 @@ will display this
 
 # main
 def Main() -> int:
-	if get('-h').exists:
-		return help(get('-h').list)
+	if get('-h', "--help").exists:
+		return help(get('-h', "--help").list)
 	if not exists(confile):
 		UseXmp(confile, InitConfig())
 	conf = ReadXmp()  # set global WEEKDAYS and MONTHS

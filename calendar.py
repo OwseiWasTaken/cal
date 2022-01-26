@@ -3,7 +3,7 @@
 from util import *
 from datetime import date, datetime
 
-# TODO config file (lang, -d dates and stuff)
+# TODO edit config file without opening it
 
 
 WEEKDAYS = []
@@ -169,10 +169,6 @@ def Main() -> int:
 	assert td
 	prtmonth = MakeMonth()
 
-	# TODO
-	# -d date = search config file for
-	# date's name
-	# mktd(...), MakeMonth()
 	if get('-d').exists:
 		if len(get('-d').list) == 1:
 			d = get('-d').first
@@ -308,7 +304,6 @@ def MakeMonth() -> tuple[list[int], int, tuple[int, int]]:
 	borders = (0, 0)
 	if datetime(td.year, td.monthi, 1).weekday() != 0:
 		i = MONTHS[td.pmonth].days
-		# TODO
 		for _ in r(len(DtW) + datetime(td.year, td.monthi, 1).weekday()):
 			borders = borders[0] + 1, borders[1]
 			DtW.append(i)

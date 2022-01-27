@@ -3,9 +3,6 @@
 from util import *
 from datetime import date, datetime
 
-# TODO TODO
-#-d [date 20004,2,29] = 1° febx2
-
 # TODO edit config file without opening it
 
 
@@ -38,7 +35,7 @@ def ReadXmp():
 	MONTHS = [	# in pt-br
 		#_month(sm[11], 31),
 		_month(sm[ 0], 31),
-		_month(sm[ 1], 28),
+		_month(sm[ 1], 28), # feb
 		_month(sm[ 2], 31),
 		_month(sm[ 3], 30),
 		_month(sm[ 4], 31),
@@ -75,7 +72,7 @@ class Td:
 	year: int
 
 
-def mktd(date=date.today()):
+def mktd(date=date):
 	today = date
 	year = today.year
 	monthi = today.month
@@ -85,6 +82,9 @@ def mktd(date=date.today()):
 		pmonth = 12
 	else:
 		pmonth = monthi-1
+	if monthi == 2:
+		# add leap year's day depending on year
+		month.days+=IsLeapYear(year)
 	return Td(
 		today,
 		today.day,
@@ -98,66 +98,7 @@ def mktd(date=date.today()):
 
 
 td = None
-
-def help(show:list[str]):
-	printf("usage: {s} [-d Date ] [-i interactive [-s strict] [-r read]] [-h [i/d/h]]\n", argv[0])
-	expl = {'d':"""
--d goto date by name: instead of starting the calendar with the current date,
-start at the date in Cal-config.xmp
-e.g
-Cal-config.xmp:
-<dates>
-	<birtday>
-		[date 'YYYY,MM,DD']
-		[desc 'my birtday!!!']
-	</birtday>
-
-	<DATE_NAME>
-		[desc 'some date']
-		[date 'YYYY,MM,DD']
-	</DATE_NAME>
-</dates>
-$%s -d birtday
-instead of starting the calendar at %s,
-it will start at YYYY,MM,DD defined by the config file
-""" % (argv[0], date.today()),
-	'i':"""
--i interactive mode:
-instead of just printing the calendar, you can
-q:quit, r:reload calendar, l:list, e:edit date, cq:clear quit, d:goto date
-e.g
-$./calendar.py -i
-<calendar printed>
-$$d
-date:2000,3,3 (this will change the calendar's date to 2000-3-3)
-$$r
-(this will reload the program)
-$$l
-"q:quit, r:reload calendar, l:list, e:edit date, cq:clear quit, d:goto date"
-$$cq
-clear and quit
-
-[-s strict mode]
-more strict on entering the date
-(003,1,2) would not work, because of the leading zeros]
-[-r reader]
-instead of using input, the program will get arguments passed to -r as input
-e.g
-$$./calendar.py -i -r d 2000,3,3
-this ill work the same as calendar.py, then typing d, then 2000,3,3
-""",
-	'h':"""
--h [i/d/h]
-will display this
-"""
-	}
-	for i in show:
-		if i in expl.keys():
-			print(expl[i])
-		else:
-			fprintf(stderr, "can't print specific help of `{s}`, it does not exist\n-h [i/d/h]\n", i)
-			return 5
-	return 0
+date = date.today()
 
 
 # main
@@ -168,7 +109,7 @@ def Main() -> int:
 		UseXmp(confile, InitConfig())
 	conf = ReadXmp()  # set global WEEKDAYS and MONTHS
 	global td
-	td = mktd()
+	td = mktd(date)
 	assert td
 	prtmonth = MakeMonth()
 
@@ -324,8 +265,12 @@ def MakeMonth() -> tuple[list[int], int, tuple[int, int]]:
 		while len(DtW) % 7:
 			DtW.append((i := i + 1))
 			borders = borders[0], borders[1] + 1
+	# don't get past month's (on next's) day
+	om = False
 	for i in r(DtW):
-		if DtW[i] == td.day:
+		if DtW[i] == 1:
+			om = not om
+		if DtW[i] == td.day and om:
 			break
 	return DtW, i, borders
 
@@ -357,6 +302,78 @@ def PrintMonth(dtw: list[str], select):
 			print(dtw[i], end=" " * (4 - len(str(dtw[i]))))
 	sout.write("\x1b[0m\n")
 
+# start
+if __name__ == "__main__":
+	start = tm()
+	ExitCode = Main()
+
+	if get("--debug").exists:
+		if not ExitCode:
+			printl("%scode successfully exited in " % COLOR.green)
+		else:
+			printl("%scode exited with error %d in " % (COLOR.red, ExitCode))
+		print("%.3f seconds%s" % (tm() - start, COLOR.nc))
+	exit(ExitCode)
+
+def help(show:list[str]):
+	printf("usage: {s} [-d Date ] [-i interactive [-s strict] [-r read]] [-h [i/d/h]]\n", argv[0])
+	expl = {'d':"""
+-d goto date by name: instead of starting the calendar with the current date,
+start at the date in Cal-config.xmp
+e.g
+Cal-config.xmp:
+<dates>
+	<birtday>
+		[date 'YYYY,MM,DD']
+		[desc 'my birtday!!!']
+	</birtday>
+
+	<DATE_NAME>
+		[desc 'some date']
+		[date 'YYYY,MM,DD']
+	</DATE_NAME>
+</dates>
+$%s -d birtday
+instead of starting the calendar at %s,
+it will start at YYYY,MM,DD defined by the config file
+""" % (argv[0], date.today()),
+	'i':"""
+-i interactive mode:
+instead of just printing the calendar, you can
+q:quit, r:reload calendar, l:list, e:edit date, cq:clear quit, d:goto date
+e.g
+$./calendar.py -i
+<calendar printed>
+$$d
+date:2000,3,3 (this will change the calendar's date to 2000-3-3)
+$$r
+(this will reload the program)
+$$l
+"q:quit, r:reload calendar, l:list, e:edit date, cq:clear quit, d:goto date"
+$$cq
+clear and quit
+
+[-s strict mode]
+more strict on entering the date
+(003,1,2) would not work, because of the leading zeros]
+[-r reader]
+instead of using input, the program will get arguments passed to -r as input
+e.g
+$$./calendar.py -i -r d 2000,3,3
+this ill work the same as calendar.py, then typing d, then 2000,3,3
+""",
+	'h':"""
+-h [i/d/h]
+will display this
+"""
+	}
+	for i in show:
+		if i in expl.keys():
+			print(expl[i])
+		else:
+			fprintf(stderr, "can't print specific help of `{s}`, it does not exist\n-h [i/d/h]\n", i)
+			return 5
+	return 0
 
 def InitConfig() -> dict[Any]:	# fu, not type hinting this shit
 	return {
@@ -417,17 +434,3 @@ def InitConfig() -> dict[Any]:	# fu, not type hinting this shit
 			# none by default
 		},
 	}
-
-
-# start
-if __name__ == "__main__":
-	start = tm()
-	ExitCode = Main()
-
-	if get("--debug").exists:
-		if not ExitCode:
-			printl("%scode successfully exited in " % COLOR.green)
-		else:
-			printl("%scode exited with error %d in " % (COLOR.red, ExitCode))
-		print("%.3f seconds%s" % (tm() - start, COLOR.nc))
-	exit(ExitCode)

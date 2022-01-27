@@ -3,6 +3,9 @@
 from util import *
 from datetime import date, datetime
 
+# TODO TODO
+#-d [date 20004,2,29] = 1° febx2
+
 # TODO edit config file without opening it
 
 

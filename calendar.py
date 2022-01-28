@@ -99,6 +99,38 @@ date = date.today()
 # make conf global
 conf:dict[str, Any] = {}
 
+def DateOnXmp(d, prterr=True) -> tuple[int, tuple[bool, tuple[int, int, int]]]:
+	nr = (false, (-1, -1, -1))
+	if "dates" in conf.keys():
+		dates = conf["dates"]
+		if d in dates.keys():
+			dv = dates[d]
+			if "date" in dv.keys():
+				newdate = IsDate(dv["date"])
+				if newdate[0]:
+					return 0, newdate
+				else:
+					if prterr:
+						fprintf(
+							stderr, "can't transform {s} to date(YYYY,MM,DD)\n", d
+						)
+					return 5, nr
+			else:
+				if prterr:
+					fprintf(stderr, "can't find [date] variable on <{s}>\n", d)
+				return 4, nr
+		else:
+			if prterr:
+				fprintf(
+					stderr, "can't find {s} on <dates>\n<dates>:{s}", d, str(dates)
+				)
+			return 3, nr
+	else:
+		if prterr:
+			fprintf(stderr, "can't find <dates> on config file\n")
+		return 2, nr
+	return -1, nr
+
 # main
 def Main() -> int:
 	if get("-h", "--help").exists:
@@ -114,31 +146,11 @@ def Main() -> int:
 	if get("-d").exists:
 		if len(get("-d").list) == 1:
 			d = get("-d").first
-			if "dates" in conf.keys():
-				dates = conf["dates"]
-				if d in dates.keys():
-					dv = dates[d]
-					if "date" in dv.keys():
-						newdate = IsDate(dv["date"])
-						if newdate[0]:
-							td = mktd(datetime(*newdate[1]))
-							prtmonth = MakeMonth()
-						else:
-							fprintf(
-								stderr, "can't transform {s} to date(YYYY,MM,DD)\n", d
-							)
-							return 5
-					else:
-						fprintf(stderr, "can't find [date] variable on <{s}>\n", d)
-						return 4
-				else:
-					fprintf(
-						stderr, "can't find {s} on <dates>\n<dates>:{s}", d, str(dates)
-					)
-					return 3
+			if (r:=DateOnXmp(d))[0]:
+				return r
 			else:
-				fprintf(stderr, "can't find <dates> on config file\n")
-				return 2
+				td = mktd(datetime(*(r[1])[1]))
+				prtmonth = MakeMonth()
 		else:
 			fprintf(
 				stderr,
@@ -203,12 +215,17 @@ def Interactive(prtmonth):
 	s = pos(0, 0)
 	e = pos(y - 2, 0)
 	ee = pos(y - 1, 0)
+	extra = ''
 	while True:
 		ss("clear")
 		stdout.write(s)
 		print(f"{td.dotws}, {td.day} de {td.month.name} de {td.year}")
 		PrintWeekDays()
 		PrintMonth(mnt[0], mnt[1])
+
+		stdout.write(extra)
+		extra = ""
+
 		stdout.write(e)
 		ipt = read("$").lower()
 		if ipt == 'q': # quit
@@ -228,16 +245,17 @@ def Interactive(prtmonth):
 			stdout.write(ee)
 			stdout.write("\x1b[2;37m")
 			stdout.write(
-				"q:quit, r:reload, l:list, e:edit date, cq:clear quit, d:goto date"
+				"q:quit, r:reload, l:list, e:edit date, cq:clear quit, d:goto date (name or yyyy,mm,dd), ld: list xmp dates"
 			)
 			stdout.write("\x1b[0m")
+
 		elif ipt == 'e':  # edit date
 			nm = read('name:')
-			print(conf)
 			conf['dates'][nm] = {'date':f'{td.year},{td.monthi},{td.day}'}
 			UseXmp(confile, conf)
 
 		elif ipt == 'ld': # list dates
+			extra = '\n'.join(['>'+i+' @ '+conf['dates'][i]['date'].replace(',', '-') for i in conf['dates']])
 
 		elif ipt == "cq": # clear;quit
 			ss("clear")
@@ -247,14 +265,20 @@ def Interactive(prtmonth):
 		elif ipt == 'd': # goto date
 			ClearLine(y - 2)
 			stdout.write(e)
-			idt, dt = IsDate(read("date:"))
-			if not strictdate:
-				idt = idt | (dt != (-1, -1, -1))
-			if idt:
-				td = mktd(datetime(dt[0], dt[1], dt[2]))
-				mnt = MakeMonth()
+			rd = read('date:')
+			idt, dt = IsDate(rd)
+
+			if (r:=DateOnXmp(rd, False))[0]:
+				if not strictdate:
+					idt = idt | (dt != (-1, -1, -1))
+				if idt:
+					td = mktd(datetime(dt[0], dt[1], dt[2]))
+					mnt = MakeMonth()
+				else:
+					stdout.write(ee + color.Red + "[can't read date!]" + color.Reset)
 			else:
-				stdout.write(ee + color.Red + "[can't read date!]" + color.Reset)
+				td = mktd(datetime(*(r[1])[1]))
+				prtmonth = MakeMonth()
 
 		else:
 			stdout.write(ee + color.Red + f"[no such command `{ipt}`] type `help` or `list` to list commands" + color.Reset)

@@ -3,9 +3,6 @@
 from util import *
 from datetime import date, datetime
 
-# TODO edit config file without opening it
-
-
 WEEKDAYS = []
 sWEEKDAYS = []
 MONTHS = []
@@ -99,7 +96,8 @@ def mktd(date=date):
 
 td = None
 date = date.today()
-
+# make conf global
+conf:dict[str, Any] = {}
 
 # main
 def Main() -> int:
@@ -107,8 +105,8 @@ def Main() -> int:
 		return help(get("-h", "--help").list)
 	if not exists(confile):
 		UseXmp(confile, InitConfig())
+	global td, conf
 	conf = ReadXmp()  # set global WEEKDAYS and MONTHS
-	global td
 	td = mktd(date)
 	assert td
 	prtmonth = MakeMonth()
@@ -150,7 +148,7 @@ def Main() -> int:
 			return 1
 
 	if get("-i").exists:  # interactive
-		return Interective(prtmonth)
+		return Interactive(prtmonth)
 	print(f"{td.dotws}, {td.day} de {td.month.name} de {td.year}")
 	PrintWeekDays()
 	PrintMonth(prtmonth[0], prtmonth[1])
@@ -189,17 +187,16 @@ erc = get("--echo-reader-cli", "--pirc", "--erc") # pirc is the old name
 
 def read(prt: str) -> str:
 	if len(reader):
+		ipt = reader.pop(0)
 		if erc:
-			sout.write(ipt)
-		return reader.pop(0)
+			print(ipt)
+		return ipt
 	else:
 		return input(prt)
 
 
-def Interective(prtmonth):
-	global td
-	# print(IsDate('3,4,3'))
-	# print(IsDate('3,0,0003'))
+def Interactive(prtmonth):
+	global td, conf
 	x, y = GetTerminalSize()
 	mnt = MakeMonth()
 	strictdate = get("--strict", "-s").exists
@@ -234,9 +231,11 @@ def Interective(prtmonth):
 				"q:quit, r:reload, l:list, e:edit date, cq:clear quit, d:goto date"
 			)
 			stdout.write("\x1b[0m")
-
 		elif ipt == 'e':  # edit date
-			assert 0, "udev"
+			nm = read('name:')
+			print(conf)
+			conf['dates'][nm] = {'date':f'{td.year},{td.monthi},{td.day}'}
+			UseXmp(confile, conf)
 
 		elif ipt == "cq":
 			ss("clear")

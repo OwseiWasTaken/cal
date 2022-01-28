@@ -100,7 +100,7 @@ date = date.today()
 conf:dict[str, Any] = {}
 
 def DateOnXmp(d, prterr=True) -> tuple[int, tuple[bool, tuple[int, int, int]]]:
-	nr = (false, (-1, -1, -1))
+	nr = (False, (-1, -1, -1))
 	if "dates" in conf.keys():
 		dates = conf["dates"]
 		if d in dates.keys():

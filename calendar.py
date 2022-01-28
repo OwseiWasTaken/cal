@@ -211,7 +211,7 @@ def Interactive(prtmonth):
 		PrintMonth(mnt[0], mnt[1])
 		stdout.write(e)
 		ipt = read("$").lower()
-		if ipt == 'q':
+		if ipt == 'q': # quit
 			ss("clear")
 			stdout.write(s)
 			print(f"{td.dotws}, {td.day} de {td.month.name} de {td.year}")
@@ -219,12 +219,12 @@ def Interactive(prtmonth):
 			PrintMonth(mnt[0], mnt[1])
 			return 0
 
-		elif ipt == 'r':
+		elif ipt == 'r': # reload
 			import calendar
 
 			return calendar.Main()
 
-		elif ipt in ('l', "list", 'h', "help"):
+		elif ipt in ('l', "list", 'h', "help"): # help
 			stdout.write(ee)
 			stdout.write("\x1b[2;37m")
 			stdout.write(
@@ -237,12 +237,14 @@ def Interactive(prtmonth):
 			conf['dates'][nm] = {'date':f'{td.year},{td.monthi},{td.day}'}
 			UseXmp(confile, conf)
 
-		elif ipt == "cq":
+		elif ipt == 'ld': # list dates
+
+		elif ipt == "cq": # clear;quit
 			ss("clear")
 			stdout.write(s)
 			return 0
 
-		elif ipt == 'd':
+		elif ipt == 'd': # goto date
 			ClearLine(y - 2)
 			stdout.write(e)
 			idt, dt = IsDate(read("date:"))

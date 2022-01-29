@@ -270,15 +270,15 @@ def Interactive(prtmonth):
 
 			if (r:=DateOnXmp(rd, False))[0]:
 				if not strictdate:
-					idt = idt | (dt != (-1, -1, -1))
+					idt = dt != (-1, -1, -1)
 				if idt:
 					td = mktd(datetime(dt[0], dt[1], dt[2]))
 					mnt = MakeMonth()
 				else:
 					stdout.write(ee + color.Red + "[can't read date!]" + color.Reset)
 			else:
-				td = mktd(datetime(*(r[1])[1]))
-				prtmonth = MakeMonth()
+				td = mktd(datetime(*((r[1])[1])))
+				mnt = MakeMonth()
 
 		else:
 			stdout.write(ee + color.Red + f"[no such command `{ipt}`] type `help` or `list` to list commands" + color.Reset)

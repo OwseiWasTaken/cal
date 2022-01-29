@@ -160,7 +160,7 @@ def Main() -> int:
 			return 1
 
 	if get("-i").exists:  # interactive
-		return Interactive(prtmonth)
+		return Interactive()
 	print(f"{td.dotws}, {td.day} de {td.month.name} de {td.year}")
 	PrintWeekDays()
 	PrintMonth(prtmonth[0], prtmonth[1])
@@ -207,7 +207,7 @@ def read(prt: str) -> str:
 		return input(prt)
 
 
-def Interactive(prtmonth):
+def Interactive():
 	global td, conf
 	x, y = GetTerminalSize()
 	mnt = MakeMonth()
@@ -216,6 +216,7 @@ def Interactive(prtmonth):
 	e = pos(y - 2, 0)
 	ee = pos(y - 1, 0)
 	extra = ''
+	pdt = {}
 	while True:
 		ss("clear")
 		stdout.write(s)
@@ -241,6 +242,9 @@ def Interactive(prtmonth):
 
 			return calendar.Main()
 
+		elif ipt in ('i',"info"):
+			extra = '\n'+'\n'.join([f"{k}: {v}" for k, v in pdt.items()])
+
 		elif ipt in ('l', "list", 'h', "help"): # help
 			stdout.write(ee)
 			stdout.write("\x1b[2;37m")
@@ -252,6 +256,7 @@ def Interactive(prtmonth):
 		elif ipt == 'e':  # edit date
 			nm = read('name:')
 			conf['dates'][nm] = {'date':f'{td.year},{td.monthi},{td.day}'}
+			dt = conf['dates'][nm]
 			UseXmp(confile, conf)
 
 		elif ipt == 'ld': # list dates
@@ -269,6 +274,7 @@ def Interactive(prtmonth):
 			idt, dt = IsDate(rd)
 
 			if (r:=DateOnXmp(rd, False))[0]:
+				# yyyy,mm,dd
 				if not strictdate:
 					idt = dt != (-1, -1, -1)
 				if idt:
@@ -277,6 +283,8 @@ def Interactive(prtmonth):
 				else:
 					stdout.write(ee + color.Red + "[can't read date!]" + color.Reset)
 			else:
+				pdt = conf['dates'][rd]
+				# date name
 				td = mktd(datetime(*((r[1])[1])))
 				mnt = MakeMonth()
 

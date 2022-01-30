@@ -210,7 +210,7 @@ def read(prt: str) -> str:
 #info format
 def InFormat(v:Any) -> str:
 	if type(v) in (tuple, list, set):
-		extra = f"{', '.join()}"
+		extra = f"{', '.join([InFormat(x) for x in v])}"
 	if isinstance(v, str):
 		extra = f"\"{v}\""
 	return extra

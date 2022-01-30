@@ -207,6 +207,14 @@ def read(prt: str) -> str:
 		return input(prt)
 
 
+#info format
+def InFormat(v:Any) -> str:
+	if type(v) in (tuple, list, set):
+		extra = f"{', '.join()}"
+	if isinstance(v, str):
+		extra = f"\"{v}\""
+	return extra
+
 def Interactive():
 	global td, conf
 	x, y = GetTerminalSize()
@@ -243,7 +251,15 @@ def Interactive():
 			return calendar.Main()
 
 		elif ipt in ('i',"info"):
-			extra = '\n'+'\n'.join([f"{k}: {v}" for k, v in pdt.items()])
+			# to format
+			for k, v in pdt.items():
+				if k == "date":
+					continue
+				k = f"\n{k}: "
+				if k == "desc":
+					k=''
+				extra += k+InFormat(v)
+				pass
 
 		elif ipt in ('l', "list", 'h', "help"): # help
 			stdout.write(ee)

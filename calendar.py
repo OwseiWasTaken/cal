@@ -132,6 +132,10 @@ def DateOnXmp(d, prterr=True) -> tuple[int, tuple[bool, tuple[int, int, int]]]:
 		return 2, nr
 	return -1, nr
 
+def DateOnXmp(conf, d:list[str]) -> tuple[int, tuple[bool, tuple[int, int, int]]]:
+	nr = (False, (-1, -1, -1))
+	r = OnXmp(conf, d)
+
 # main
 def Main() -> int:
 	if get("-h", "--help").exists:
@@ -299,20 +303,23 @@ def Interactive():
 			rd = read('date:')
 			idt, dt = IsDate(rd)
 
-			if (r:=DateOnXmp(rd, False))[0]:
-				# yyyy,mm,dd
+			r, v = OnXmp(conf, ['dates', rd, 'date'], 1)
+			if r:
 				if not strictdate:
 					idt = dt != (-1, -1, -1)
-				if idt:
-					td = mktd(datetime(dt[0], dt[1], dt[2]))
+				if idt and len(dt) == 3:
+					td = mktd(datetime(*dt))
 					mnt = MakeMonth()
 				else:
 					stdout.write(ee + color.Red + "[can't read date!]" + color.Reset)
 			else:
-				pdt = conf['dates'][rd]
 				# date name
-				td = mktd(datetime(*((r[1])[1])))
-				mnt = MakeMonth()
+				r, dt = IsDate(v)
+				if not r:
+					stdout.write(ee + color.Red + f"[can't convert `{v}` to date]" + color.Reset)
+				else:
+					td = mktd(datetime(*dt))
+					mnt = MakeMonth()
 
 		else:
 			stdout.write(ee + color.Red + f"[no such command `{ipt}`] type `help` or `list` to list commands" + color.Reset)

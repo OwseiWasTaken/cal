@@ -100,42 +100,6 @@ date = date.today()
 # make conf global
 conf:dict[str, Any] = {}
 
-def DateOnXmp(d, prterr=True) -> tuple[int, tuple[bool, tuple[int, int, int]]]:
-	nr = (False, (-1, -1, -1))
-	if "dates" in conf.keys():
-		dates = conf["dates"]
-		if d in dates.keys():
-			dv = dates[d]
-			if "date" in dv.keys():
-				newdate = IsDate(dv["date"])
-				if newdate[0]:
-					return 0, newdate
-				else:
-					if prterr:
-						fprintf(
-							stderr, "can't transform {s} to date(YYYY,MM,DD)\n", d
-						)
-					return 5, nr
-			else:
-				if prterr:
-					fprintf(stderr, "can't find [date] variable on <{s}>\n", d)
-				return 4, nr
-		else:
-			if prterr:
-				fprintf(
-					stderr, "can't find {s} on <dates>\n<dates>:{s}", d, str(dates)
-				)
-			return 3, nr
-	else:
-		if prterr:
-			fprintf(stderr, "can't find <dates> on config file\n")
-		return 2, nr
-	return -1, nr
-
-def DateOnXmp(conf, d:list[str]) -> tuple[int, tuple[bool, tuple[int, int, int]]]:
-	nr = (False, (-1, -1, -1))
-	r = OnXmp(conf, d)
-
 # main
 def Main() -> int:
 	if get("-h", "--help").exists:
@@ -159,11 +123,23 @@ def Main() -> int:
 	if get("-d").exists:
 		if len(get("-d").list) == 1:
 			d = get("-d").first
-			if (r:=DateOnXmp(d))[0]:
-				return r
+			#
+			r, v = OnXmp(conf, ['dates', d, 'date'])
+			if not r:
+				print(v)
+				r, dt = IsDate(v)
+				if not r:
+					td = mktd(datetime(*dt))
+					prtmonth = MakeMonth()
 			else:
-				td = mktd(datetime(*(r[1])[1]))
-				prtmonth = MakeMonth()
+				r, dt = IsDate(d)
+				if r:
+					td = mktd(datetime(*dt))
+					prtmonth = MakeMonth()
+				else:
+					stderr.write(f"can't read date from -d {d}\n")
+					return 3
+			#
 		else:
 			fprintf(
 				stderr,
@@ -313,6 +289,7 @@ def Interactive():
 				else:
 					stdout.write(ee + color.Red + "[can't read date!]" + color.Reset)
 			else:
+				#r, v = OnXmp(conf, ['dates', rd, 'date'], 1)
 				# date name
 				r, dt = IsDate(v)
 				if not r:

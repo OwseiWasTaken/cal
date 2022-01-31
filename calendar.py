@@ -94,6 +94,10 @@ def mktd(date=date):
 		year,
 	)
 
+#WEEKDAYS = []
+#sWEEKDAYS = []
+#MONTHS = []
+#confile = "/".join(__file__.split("/")[:-1]) + "/Config.xmp"
 
 td = None
 date = date.today()
@@ -236,9 +240,9 @@ def Interactive():
 			return 0
 
 		elif ipt == 'r': # reload
-			import calendar
+			from calendar import Main, WEEKDAYS, sWEEKDAYS, MONTHS, confile, td, date, conf
 
-			return calendar.Main()
+			return Main()
 
 		elif ipt in ('i',"info"):
 			# to format

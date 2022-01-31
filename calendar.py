@@ -2,6 +2,7 @@
 # imports
 from util import *
 from datetime import date, datetime
+from cfgbt import InitConfig, OnXmp
 
 WEEKDAYS = []
 sWEEKDAYS = []
@@ -139,6 +140,14 @@ def Main() -> int:
 		UseXmp(confile, InitConfig())
 	global td, conf
 	conf = ReadXmp()  # set global WEEKDAYS and MONTHS
+
+	#how 2 use OnXmp
+	#path = ['dates', 'DateX', 'a']
+	#errno, v = OnXmp(conf, path, 1)
+	#if errno:
+	#	print(f"missing <{path[errno]}> on {v}")
+	#return 0
+
 	td = mktd(date)
 	assert td
 	prtmonth = MakeMonth()
@@ -457,62 +466,3 @@ will display this
 	return 0
 
 
-def InitConfig() -> dict[Any]:	# fu, not type hinting this shit
-	return {
-		"use-lang": "en-us",
-		"lang": {
-			"pt-br": {
-				"weekdays": (
-					"Segunda",
-					"Terça",
-					"Quarta",
-					"Quinta",
-					"Sexta",
-					"Sábado",
-					"Domingo",
-				),
-				"months": (
-					"Jan",
-					"Fev",
-					"Mar",
-					"Abr",
-					"Mai",
-					"Jun",
-					"Jul",
-					"Ago",
-					"Set",
-					"Out",
-					"Nov",
-					"Dez",
-				),
-			},
-			"en-us": {
-				"weekdays": (
-					"Monday",
-					"Tuesday",
-					"Wednesday",
-					"Thursday",
-					"Friday",
-					"Saturday",
-					"Sunday",
-				),
-				"months": (
-					"Jan",
-					"Feb",
-					"Mar",
-					"Apr",
-					"May",
-					"Jun",
-					"Jul",
-					"Agu",
-					"Sep",
-					"Oct",
-					"Nov",
-					"Dec",
-				),
-			},
-		},
-		"dates": {
-			# none by default
-		},
-	}

@@ -6,7 +6,7 @@ from datetime import date, datetime
 WEEKDAYS = []
 sWEEKDAYS = []
 MONTHS = []
-confile = "/".join(__file__.split("/")[:-1]) + "/Cal-config.xmp"
+confile = "/".join(__file__.split("/")[:-1]) + "/Config.xmp"
 
 
 @dataclass
@@ -395,9 +395,9 @@ def help(show: list[str]):
 	expl = {
 		"d": """
 -d goto date by name: instead of starting the calendar with the current date,
-start at the date in Cal-config.xmp
+start at the date in Config.xmp
 e.g
-Cal-config.xmp:
+Config.xmp:
 <dates>
 	<birtday>
 		[date 'YYYY,MM,DD']

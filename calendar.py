@@ -77,9 +77,9 @@ def mktd(date=date):
 	month = MONTHS[monthi - 1]
 	dotw = today.weekday()
 	if monthi == 0:
-		pmonth = 12
+		pmonth = 11
 	else:
-		pmonth = monthi - 1
+		pmonth = monthi - 2
 	if monthi == 2:
 		# add leap year's day depending on year
 		month.days += IsLeapYear(year)

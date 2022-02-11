@@ -94,11 +94,6 @@ def mktd(date=date):
 		year,
 	)
 
-#WEEKDAYS = []
-#sWEEKDAYS = []
-#MONTHS = []
-#confile = "/".join(__file__.split("/")[:-1]) + "/Config.xmp"
-
 td = None
 date = date.today()
 # make conf global
@@ -112,14 +107,6 @@ def Main() -> int:
 		UseXmp(confile, InitConfig())
 	global td, conf
 	conf = ReadXmp()  # set global WEEKDAYS and MONTHS
-
-	#how 2 use OnXmp
-	#path = ['dates', 'DateX', 'a']
-	#errno, v = OnXmp(conf, path, 1)
-	#if errno:
-	#	print(f"missing <{path[errno]}> on {v}")
-	#return 0
-
 	td = mktd(date)
 	assert td
 	prtmonth = MakeMonth()
@@ -130,7 +117,7 @@ def Main() -> int:
 			#
 			r, v = OnXmp(conf, ['dates', d, 'date'])
 			if not r:
-				print(v)
+				#print(v)
 				r, dt = IsDate(v)
 				if not r:
 					td = mktd(datetime(*dt))

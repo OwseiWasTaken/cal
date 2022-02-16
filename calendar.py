@@ -70,7 +70,7 @@ class Td:
 	dotws: str
 	year: int
 
-# makes ToDay DC 
+# makes ToDay DataClass
 def mktd(date=date):
 	today = date
 	year = today.year
@@ -109,7 +109,6 @@ def Main() -> int:
 	global td, conf
 	conf = ReadXmp()  # set global WEEKDAYS and MONTHS
 	td = mktd(date)
-	assert td
 	prtmonth = MakeMonth()
 
 	if get("-d").exists:
@@ -178,14 +177,14 @@ if get("-r").exists:
 erc = get("--echo-reader-cli", "--pirc", "--erc") # pirc is the old name
 
 
-def read(prt: str) -> str:
+def read(st: str) -> str:
 	if len(reader):
 		ipt = reader.pop(0)
 		if erc:
 			print(ipt)
 		return ipt
 	else:
-		return input(prt)
+		return input(st)
 
 
 #info format
@@ -200,7 +199,7 @@ def InFormat(v:Any) -> str:
 def Interactive():
 	global td, conf
 	x, y = GetTerminalSize()
-	mnt = MakeMonth()
+	prtmonth = MakeMonth()
 	strictdate = get("--strict", "-s").exists
 	s = pos(0, 0)
 	e = pos(y - 2, 0)
@@ -212,7 +211,7 @@ def Interactive():
 		stdout.write(s)
 		print(f"{td.dotws}, {td.day} de {td.month.name} de {td.year}")
 		PrintWeekDays()
-		PrintMonth(mnt[0], mnt[1])
+		PrintMonth(prtmonth[0], prtmonth[1])
 
 		stdout.write(extra)
 		extra = ""
@@ -224,7 +223,7 @@ def Interactive():
 			stdout.write(s)
 			print(f"{td.dotws}, {td.day} de {td.month.name} de {td.year}")
 			PrintWeekDays()
-			PrintMonth(mnt[0], mnt[1])
+			PrintMonth(prtmonth[0], prtmonth[1])
 			return 0
 
 		elif ipt == 'r': # reload
@@ -329,7 +328,7 @@ def MakeMonth() -> tuple[list[int], int, tuple[int, int]]:
 			break
 	return DtW, i, borders
 
-
+# format and print month string (list[str])
 def PrintMonth(dtw: list[str], select):
 	grey = True
 	w = -1

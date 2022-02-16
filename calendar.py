@@ -7,6 +7,7 @@ from cfgbt import InitConfig, OnXmp
 WEEKDAYS = []
 sWEEKDAYS = []
 MONTHS = []
+# set config file (same folder as calendar.py)
 confile = "/".join(__file__.split("/")[:-1]) + "/Config.xmp"
 
 
@@ -18,7 +19,7 @@ class _month:
 	def __repr__(this):
 		return f"{this.name} w/ {this.days} days"
 
-
+# get xmp content, set it to global vars and returns the tree
 def ReadXmp():
 	global MONTHS, WEEKDAYS, sWEEKDAYS
 	if not exists(confile):
@@ -69,7 +70,7 @@ class Td:
 	dotws: str
 	year: int
 
-
+# makes ToDay DC 
 def mktd(date=date):
 	today = date
 	year = today.year

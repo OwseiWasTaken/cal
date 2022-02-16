@@ -111,13 +111,12 @@ def Main() -> int:
 	td = mktd(date)
 	prtmonth = MakeMonth()
 
+	# startup date set
 	if get("-d").exists:
 		if len(get("-d").list) == 1:
 			d = get("-d").first
-			#
 			r, v = OnXmp(conf, ['dates', d, 'date'])
 			if not r:
-				#print(v)
 				r, dt = IsDate(v)
 				if not r:
 					td = mktd(datetime(*dt))
@@ -130,8 +129,7 @@ def Main() -> int:
 				else:
 					stderr.write(f"can't read date from -d {d}\n")
 					return 3
-			#
-		else:
+		else: # -d with no extra args
 			fprintf(
 				stderr,
 				"-d option uses 1 and only 1 argument!, not {d}\n",
@@ -139,7 +137,7 @@ def Main() -> int:
 			)
 			return 1
 
-	if get("-i").exists:  # interactive
+	if get("-i").exists:  # interactive mode
 		return Interactive()
 	print(f"{td.dotws}, {td.day} de {td.month.name} de {td.year}")
 	PrintWeekDays()
@@ -198,9 +196,8 @@ def InFormat(v:Any) -> str:
 
 def Interactive():
 	global td, conf
-	x, y = GetTerminalSize()
+	_, y = GetTerminalSize()
 	prtmonth = MakeMonth()
-	strictdate = get("--strict", "-s").exists
 	s = pos(0, 0)
 	e = pos(y - 2, 0)
 	ee = pos(y - 1, 0)
@@ -373,7 +370,7 @@ if __name__ == "__main__":
 
 def help(show: list[str]):
 	printf(
-		"usage: {s} [-d Date ] [-i interactive [-s strict] [-r read]] [-h [i/d/h]]\n",
+		"usage: {s} [-d Date ] [-i interactive [-r read]] [-h [i/d/h]]\n",
 		argv[0],
 	)
 	expl = {
@@ -414,9 +411,6 @@ $$l
 $$cq
 clear and quit
 
-[-s strict mode]
-more strict on entering the date
-(003,1,2) would not work, because of the leading zeros]
 [-r reader]
 instead of using input, the program will get arguments passed to -r as input
 e.g

@@ -148,7 +148,7 @@ def Main() -> int:
 	return 0
 
 
-# cumrag to check if date can be parsed
+# regex to check if date can be parsed
 checkdate = comreg(r"\d\d*,[012]?\d,[0123]?\d")
 
 
